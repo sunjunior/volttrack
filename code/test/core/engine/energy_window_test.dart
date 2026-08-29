@@ -54,4 +54,57 @@ void main() {
     expect(w.kwhPer100km, closeTo(1.1, 0.001));
     expect(w.yuanPerKm, closeTo(1.1 / 100, 0.001));
   });
+
+  test('区间无充电但到达 SOC 抬升 → ride<0 → unusual=true', () {
+    // 手算：起点到达 SOC 45、终点到达 SOC 100，区间充入 0 度，C=0.96。
+    // ΔSOC = 0.96×(100−45)/100 = +0.528；ride = 0 − 0.528 = −0.528 < 0。
+    // 距离 1040−1000 = 40km；kwhPer100 = −0.528/40*100 = −1.32（非 >6 分支）。
+    final windows = buildWindows(
+      charges: [
+        rec(1, DateTime(2026, 1, 1, 8), sBefore: 45, mileage: 1000),
+        rec(2, DateTime(2026, 1, 2, 8), sBefore: 100, mileage: 1040),
+      ],
+      capacityKwh: 0.96,
+    );
+    final w = windows.first;
+    expect(w.energyInKwh, 0);
+    expect(w.deltaSocKwh, closeTo(0.528, 0.0001));
+    expect(w.rideKwh, closeTo(-0.528, 0.0001));
+    expect(w.rideKwh, lessThan(0));
+    expect(w.unusual, isTrue);
+  });
+
+  test('短距离高充入 → kwhPer100>6 → unusual=true', () {
+    // 手算：两锚点到达 SOC 相同（50），区间充入 1.0 度，距离 10km。
+    // ΔSOC = 0；ride = 1.0；kwhPer100 = 1.0/10*100 = 10 > 6。
+    final windows = buildWindows(
+      charges: [
+        rec(1, DateTime(2026, 1, 1, 8), sBefore: 50, mileage: 1000),
+        rec(2, DateTime(2026, 1, 1, 12), energy: 1.0, sBefore: 50),
+        rec(3, DateTime(2026, 1, 2, 8), sBefore: 50, mileage: 1010),
+      ],
+      capacityKwh: 0.96,
+    );
+    final w = windows.first;
+    expect(w.rideKwh, closeTo(1.0, 0.0001));
+    expect(w.kwhPer100km, closeTo(10.0, 0.001));
+    expect(w.kwhPer100km, greaterThan(6));
+    expect(w.unusual, isTrue);
+  });
+
+  test('边界 kwhPer100 == 6.0 → unusual=false', () {
+    // 手算：区间充入 0.6 度，距离 10km，SOC 相同 → kwhPer100 = 0.6/10*100 = 6.0。
+    // 实现用严格大于（ride<0 || kwhPer100>6），恰好 6.0 不标记 unusual。
+    final windows = buildWindows(
+      charges: [
+        rec(1, DateTime(2026, 1, 1, 8), sBefore: 50, mileage: 1000),
+        rec(2, DateTime(2026, 1, 1, 12), energy: 0.6, sBefore: 50),
+        rec(3, DateTime(2026, 1, 2, 8), sBefore: 50, mileage: 1010),
+      ],
+      capacityKwh: 0.96,
+    );
+    final w = windows.first;
+    expect(w.kwhPer100km, closeTo(6.0, 1e-9));
+    expect(w.unusual, isFalse);
+  });
 }
