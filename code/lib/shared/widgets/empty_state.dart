@@ -2,32 +2,32 @@ import 'package:flutter/material.dart';
 
 class EmptyState extends StatelessWidget {
   final IconData icon;
-  final String title;
   final String message;
-
+  final String hint;
+  final String actionLabel;
+  final VoidCallback onAction;
   const EmptyState({
     super.key,
-    this.icon = Icons.inbox,
-    required this.title,
+    required this.icon,
     required this.message,
+    required this.hint,
+    required this.actionLabel,
+    required this.onAction,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 48, color: theme.colorScheme.outline),
+          Icon(icon, size: 64, color: Theme.of(context).colorScheme.outline),
           const SizedBox(height: 12),
-          Text(title, style: theme.textTheme.titleMedium),
+          Text(message, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 4),
-          Text(
-            message,
-            style: theme.textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
+          Text(hint, style: Theme.of(context).textTheme.bodySmall),
+          const SizedBox(height: 16),
+          FilledButton(onPressed: onAction, child: Text(actionLabel)),
         ],
       ),
     );
