@@ -3,6 +3,7 @@ import 'home/home_screen.dart';
 import 'charging/charging_screen.dart';
 import 'stats/stats_screen.dart';
 import 'vehicle/vehicle_screen.dart';
+import 'calculator/calculator_screen.dart';
 
 class Shell extends StatefulWidget {
   const Shell({super.key});
@@ -22,6 +23,14 @@ class _ShellState extends State<Shell> {
     ];
     return Scaffold(
       body: IndexedStack(index: _index, children: pages),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const CalculatorScreen()),
+          );
+        },
+        child: const Icon(Icons.calculate_outlined),
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
