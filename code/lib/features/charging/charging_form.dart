@@ -62,13 +62,47 @@ class _ChargingFormState extends ConsumerState<ChargingForm> {
   bool get _byTime => _mode == ChargeMode.byTime;
   bool get _homeOutlet => _mode == ChargeMode.homeOutlet;
 
+  bool get _hasValidSource {
+    switch (_mode) {
+      case ChargeMode.byKwh:
+        final kwh = _d(_kwh.text);
+        if (kwh != null && kwh > 0) return true;
+        final money = _d(_money.text);
+        final unitPrice = _d(_unitPrice.text);
+        return money != null && unitPrice != null && unitPrice > 0;
+      case ChargeMode.byTime:
+        final hours = _d(_hours.text);
+        final power = _d(_power.text);
+        return hours != null && hours > 0 && power != null && power > 0;
+      case ChargeMode.homeOutlet:
+        final before = int.tryParse(_socBefore.text);
+        final after = int.tryParse(_socAfter.text);
+        if (before != null && after != null && after > before) return true;
+        final kwh = _d(_kwh.text);
+        return kwh != null && kwh > 0;
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   Future<void> _save() async {
-    final result = _preview();
-    if (result == null) return;
     final battery = ref.read(activeBatteryProvider).value;
+    if (battery == null) {
+      _showMessage('请先在档案页添加电池');
+      return;
+    }
+    if (!_hasValidSource) {
+      _showMessage('请完整填写当前模式的计费信息');
+      return;
+    }
+    final result = _preview()!;
     final repo = ref.read(repoProvider);
     await repo.addCharge(c: ChargeRecord(
-      batteryId: battery?.id ?? 1,
+      batteryId: battery.id,
       occurredAt: DateTime.now(),
       mode: _mode,
       energyKwh: result.kwh,
