@@ -25,10 +25,7 @@ class HomeScreen extends ConsumerWidget {
                 actionLabel: '去记账',
                 onAction: onGoToCharging ?? () {},
               )
-            : _Overview(
-                analytics: a,
-                onGoToCharging: onGoToCharging ?? () {},
-              ),
+            : _Overview(analytics: a),
       ),
     );
   }
@@ -36,9 +33,8 @@ class HomeScreen extends ConsumerWidget {
 
 class _Overview extends StatelessWidget {
   final Analytics analytics;
-  final VoidCallback onGoToCharging;
 
-  const _Overview({required this.analytics, required this.onGoToCharging});
+  const _Overview({required this.analytics});
 
   String _fmt(double? v) => v == null ? '--' : v.toStringAsFixed(2);
 
