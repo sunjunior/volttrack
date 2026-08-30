@@ -56,6 +56,29 @@ void main() {
     await db.close();
   });
 
+  testWidgets('有记录时仍显示新增入口且可进入记账表单', (tester) async {
+    final db = openNullDatabase();
+    final batteryId = await insertBattery(db);
+    await db.into(db.charges).insert(ChargesCompanion.insert(
+          batteryId: batteryId,
+          occurredAt: DateTime(2026, 2, 1, 8, 30),
+          mode: ChargeMode.byTime,
+          energyKwh: 0.51,
+          energySource: EnergySource.powerTimesHours,
+        ));
+    await tester.pumpWidget(ProviderScope(
+      overrides: [dbProvider.overrideWithValue(db)],
+      child: const MaterialApp(home: ChargingScreen()),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('add_charge')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('add_charge')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('save')), findsOneWidget);
+    await db.close();
+  });
+
   testWidgets('空列表显示引导空态并跳转记账表单', (tester) async {
     final db = openNullDatabase();
     await tester.pumpWidget(ProviderScope(

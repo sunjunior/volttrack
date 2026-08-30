@@ -19,6 +19,17 @@ class ChargingScreen extends ConsumerWidget {
     final chargesAsync = ref.watch(chargesProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('记账')),
+      floatingActionButton: FloatingActionButton(
+        key: const Key('add_charge'),
+        heroTag: 'add_charge',
+        tooltip: '记一笔',
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const ChargingForm()),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
       body: chargesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('加载失败: $e')),
