@@ -61,23 +61,26 @@ class _VehicleFormState extends ConsumerState<VehicleForm> {
     }
     final vehicleId = vehicles.first.id;
     final active = ref.read(activeBatteryProvider).value;
-    if (active != null) {
-      await (db.update(db.batteries)
-            ..where((b) => b.id.equals(active.id)))
-          .write(BatteriesCompanion(
-            active: const Value(false),
-            deactivatedAt: Value(DateTime.now()),
+    await db.transaction(() async {
+      if (active != null) {
+        await (db.update(db.batteries)
+              ..where((b) => b.id.equals(active.id)))
+            .write(BatteriesCompanion(
+              active: const Value(false),
+              deactivatedAt: Value(DateTime.now()),
+            ));
+      }
+      await db.into(db.batteries).insert(BatteriesCompanion.insert(
+            vehicleId: vehicleId,
+            name: name,
+            type: _type,
+            voltageV: voltage,
+            capacityAh: capacity,
+            theoreticalRangeKm:
+                range == null ? const Value.absent() : Value(range),
+            installedAt: _installedAt,
           ));
-    }
-    await db.into(db.batteries).insert(BatteriesCompanion.insert(
-          vehicleId: vehicleId,
-          name: name,
-          type: _type,
-          voltageV: voltage,
-          capacityAh: capacity,
-          theoreticalRangeKm: range == null ? const Value.absent() : Value(range),
-          installedAt: _installedAt,
-        ));
+    });
     if (mounted && Navigator.canPop(context)) {
       Navigator.pop(context, true);
     }
