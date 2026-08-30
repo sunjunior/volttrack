@@ -44,7 +44,7 @@ class _Overview extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         _OverviewCard(
-          title: '最近百公里电耗',
+          title: '平均百公里电耗',
           value: _fmt(analytics.avgKwhPer100km),
           unit: 'kWh/100km',
           color: Colors.blue,
