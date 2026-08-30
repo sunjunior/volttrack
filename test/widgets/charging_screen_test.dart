@@ -73,6 +73,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('add_charge')), findsOneWidget);
+    expect(find.byType(FloatingActionButton), findsNothing);
     await tester.tap(find.byKey(const Key('add_charge')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('save')), findsOneWidget);

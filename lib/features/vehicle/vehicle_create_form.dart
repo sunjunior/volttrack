@@ -5,16 +5,30 @@ import '../../data/providers.dart';
 import '../../data/tables.dart';
 
 class VehicleCreateForm extends ConsumerStatefulWidget {
-  const VehicleCreateForm({super.key});
+  final Vehicle? existing;
+  const VehicleCreateForm({super.key, this.existing});
   @override
   ConsumerState<VehicleCreateForm> createState() => _VehicleCreateFormState();
 }
 
 class _VehicleCreateFormState extends ConsumerState<VehicleCreateForm> {
-  final _brand = TextEditingController();
-  final _model = TextEditingController();
-  final _mileage = TextEditingController();
+  Vehicle? get _editing => widget.existing;
+  late final TextEditingController _brand;
+  late final TextEditingController _model;
+  late final TextEditingController _mileage;
   DateTime? _purchaseDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _brand = TextEditingController(text: widget.existing?.brand ?? '');
+    _model = TextEditingController(text: widget.existing?.model ?? '');
+    _mileage = TextEditingController(
+        text: widget.existing == null
+            ? ''
+            : widget.existing!.initialMileageKm.toString());
+    _purchaseDate = widget.existing?.purchaseDate;
+  }
 
   @override
   void dispose() {
@@ -39,14 +53,24 @@ class _VehicleCreateFormState extends ConsumerState<VehicleCreateForm> {
     }
     final mileage = double.tryParse(_mileage.text);
     final db = ref.read(dbProvider);
-    await db.into(db.vehicles).insert(VehiclesCompanion.insert(
-          brand: brand,
-          model: model,
-          purchaseDate: _purchaseDate == null
-              ? const Value.absent()
-              : Value(_purchaseDate!),
-          initialMileageKm: Value(mileage ?? 0.0),
-        ));
+    if (_editing != null) {
+      await (db.update(db.vehicles)..where((t) => t.id.equals(_editing!.id)))
+          .write(VehiclesCompanion(
+        brand: Value(brand),
+        model: Value(model),
+        purchaseDate: Value(_purchaseDate),
+        initialMileageKm: Value(mileage ?? _editing!.initialMileageKm),
+      ));
+    } else {
+      await db.into(db.vehicles).insert(VehiclesCompanion.insert(
+            brand: brand,
+            model: model,
+            purchaseDate: _purchaseDate == null
+                ? const Value.absent()
+                : Value(_purchaseDate!),
+            initialMileageKm: Value(mileage ?? 0.0),
+          ));
+    }
     if (mounted && Navigator.canPop(context)) {
       Navigator.pop(context, true);
     }
@@ -65,7 +89,7 @@ class _VehicleCreateFormState extends ConsumerState<VehicleCreateForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('添加车辆')),
+      appBar: AppBar(title: Text(_editing == null ? '添加车辆' : '编辑车辆')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
