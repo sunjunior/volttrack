@@ -54,6 +54,12 @@ class _VehicleFormState extends ConsumerState<VehicleForm> {
       return;
     }
     final db = ref.read(dbProvider);
+    final vehicles = await db.select(db.vehicles).get();
+    if (vehicles.isEmpty) {
+      _showMessage('请先添加车辆');
+      return;
+    }
+    final vehicleId = vehicles.first.id;
     final active = ref.read(activeBatteryProvider).value;
     if (active != null) {
       await (db.update(db.batteries)
@@ -64,7 +70,7 @@ class _VehicleFormState extends ConsumerState<VehicleForm> {
           ));
     }
     await db.into(db.batteries).insert(BatteriesCompanion.insert(
-          vehicleId: 1,
+          vehicleId: vehicleId,
           name: name,
           type: _type,
           voltageV: voltage,

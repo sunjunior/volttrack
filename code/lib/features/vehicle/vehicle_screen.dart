@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/battery.dart' show BatteryType;
 import '../../data/providers.dart';
 import '../../data/tables.dart';
+import 'vehicle_create_form.dart';
 import 'vehicle_form.dart';
 
 class VehicleScreen extends ConsumerWidget {
@@ -30,8 +31,8 @@ class VehicleScreen extends ConsumerWidget {
     final activeId = ref.watch(activeBatteryProvider).value?.id;
     return Scaffold(
       appBar: AppBar(title: const Text('档案')),
-      body: FutureBuilder<List<Vehicle>>(
-        future: db.select(db.vehicles).get(),
+      body: StreamBuilder<List<Vehicle>>(
+        stream: db.select(db.vehicles).watch(),
         builder: (context, snap) {
           final rows = snap.data ?? const <Vehicle>[];
           final vehicle = rows.isEmpty ? null : rows.first;
@@ -99,7 +100,25 @@ class _VehicleCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: v == null
-            ? Text('未设置车辆', style: Theme.of(context).textTheme.bodyMedium)
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('未设置车辆',
+                      style: Theme.of(context).textTheme.bodyMedium),
+                  const SizedBox(height: 8),
+                  FilledButton.icon(
+                    key: const Key('add_vehicle'),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                            builder: (_) => const VehicleCreateForm()),
+                      );
+                    },
+                    icon: const Icon(Icons.directions_bike),
+                    label: const Text('添加车辆'),
+                  ),
+                ],
+              )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
