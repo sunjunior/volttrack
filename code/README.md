@@ -39,6 +39,16 @@ flutter test
 flutter build apk --debug
 # 产物：build/app/outputs/flutter-apk/app-debug.apk
 
+## 构建正式签名 release
+签名配置读取 android/key.properties（不入库，含 storePassword/keyPassword/keyAlias/storeFile），
+keystore 本体放在仓库外（如 ~/keystores/volttrack-upload.jks，别名 upload）。丢失 keystore 将无法向既有安装推送更新，请务必备份。
+
+# 通用包（约 59MB）
+flutter build apk --release
+# 分 ABI 瘦身包（arm64 约 20MB，主流机型选 arm64-v8a）
+flutter build apk --release --split-per-abi
+# 产物：build/app/outputs/flutter-apk/app-release.apk 与 app-<abi>-release.apk
+
 ## 运行（需连接设备/模拟器）
 flutter run
 ```
