@@ -29,8 +29,11 @@ final analyticsProvider = Provider<AsyncValue<Analytics>>((ref) {
   final chargesAsync = ref.watch(chargesProvider);
   final batteryAsync = ref.watch(activeBatteryProvider);
   try {
-    final charges = chargesAsync.value ?? const <ChargeRecord>[];
+    final allCharges = chargesAsync.value ?? const <ChargeRecord>[];
     final battery = batteryAsync.value;
+    final charges = battery == null
+        ? allCharges
+        : allCharges.where((c) => c.batteryId == battery.id).toList();
     final capacity = battery == null
         ? 1.0
         : battery.overrideCapacityKwh ?? battery.voltageV * battery.capacityAh / 1000;
