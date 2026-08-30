@@ -17,6 +17,14 @@ final activeBatteryProvider = StreamProvider<Battery?>((ref) {
   return ref.watch(repoProvider).activeBattery();
 });
 
+int? _latestSocAfterPct(List<ChargeRecord> charges) {
+  for (final c in charges) {
+    final soc = c.socAfterPct;
+    if (soc != null) return soc;
+  }
+  return null;
+}
+
 final analyticsProvider = Provider<AsyncValue<Analytics>>((ref) {
   final chargesAsync = ref.watch(chargesProvider);
   final batteryAsync = ref.watch(activeBatteryProvider);
@@ -29,7 +37,7 @@ final analyticsProvider = Provider<AsyncValue<Analytics>>((ref) {
     return AsyncValue.data(computeAnalytics(
       charges: charges,
       capacityKwh: capacity,
-      currentSocPct: null,
+      currentSocPct: _latestSocAfterPct(charges)?.toDouble(),
     ));
   } catch (err, stack) {
     return AsyncValue.error(err, stack);
