@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'battery_x.dart';
 import 'database.dart';
 import 'repository.dart';
 import 'tables.dart';
@@ -34,12 +35,10 @@ final analyticsProvider = Provider<AsyncValue<Analytics>>((ref) {
     final charges = battery == null
         ? allCharges
         : allCharges.where((c) => c.batteryId == battery.id).toList();
-    final capacity = battery == null
-        ? 1.0
-        : battery.overrideCapacityKwh ?? battery.voltageV * battery.capacityAh / 1000;
+    final capacity = battery?.capacityKwh;
     return AsyncValue.data(computeAnalytics(
       charges: charges,
-      capacityKwh: capacity,
+      capacityKwh: capacity ?? 1.0,
       currentSocPct: _latestSocAfterPct(charges)?.toDouble(),
     ));
   } catch (err, stack) {

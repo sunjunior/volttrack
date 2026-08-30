@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/engine/analytics.dart';
 import '../../core/engine/energy_window.dart';
 import '../../core/engine/soh.dart';
+import '../../data/battery_x.dart';
 import '../../data/providers.dart';
 import '../../data/tables.dart';
 
@@ -142,7 +143,7 @@ class _SohCard extends StatelessWidget {
   String? _sohPct() {
     final battery = this.battery;
     if (battery == null) return null;
-    final capacityKwh = battery.overrideCapacityKwh ?? battery.voltageV * battery.capacityAh / 1000;
+    final capacityKwh = battery.capacityKwh;
     for (final w in analytics.windows) {
       final start = w.start;
       if ((start.socAfterPct ?? 0) >= 95 && (start.socBeforePct ?? 100) <= 10) {

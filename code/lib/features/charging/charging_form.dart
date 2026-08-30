@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/engine/energy_derivation.dart';
 import '../../core/models/charge.dart';
+import '../../data/battery_x.dart';
 import '../../data/providers.dart';
 
 class ChargingForm extends ConsumerStatefulWidget {
@@ -38,9 +39,7 @@ class _ChargingFormState extends ConsumerState<ChargingForm> {
 
   EnergyResult? _preview() {
     final battery = ref.read(activeBatteryProvider).value;
-    final capacity = battery == null
-        ? null
-        : (battery.overrideCapacityKwh ?? battery.voltageV * battery.capacityAh / 1000);
+    final capacity = battery?.capacityKwh;
     try {
       return deriveEnergyKwh(
         mode: _mode,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/engine/charge_calculator.dart';
+import '../../data/battery_x.dart';
 import '../../data/providers.dart';
 
 class CalculatorScreen extends ConsumerWidget {
@@ -9,9 +10,7 @@ class CalculatorScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final battery = ref.watch(activeBatteryProvider).value;
-    final capacityKwh = battery == null
-        ? null
-        : (battery.overrideCapacityKwh ?? battery.voltageV * battery.capacityAh / 1000);
+    final capacityKwh = battery?.capacityKwh;
     return _CalculatorBody(capacityKwh: capacityKwh);
   }
 }

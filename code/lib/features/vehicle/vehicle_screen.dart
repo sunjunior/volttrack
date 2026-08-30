@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/battery.dart' show BatteryType;
+import '../../data/battery_x.dart';
 import '../../data/providers.dart';
 import '../../data/tables.dart';
 import 'vehicle_create_form.dart';
@@ -14,15 +15,6 @@ class VehicleScreen extends ConsumerWidget {
         BatteryType.lifepo4 => '磷酸铁锂',
         BatteryType.ternaryLithium => '三元锂',
       };
-
-  static String _intValue(double v) =>
-      v == v.roundToDouble() ? v.round().toString() : v.toString();
-
-  static String specLabel(Battery b) =>
-      '${_intValue(b.voltageV)}V${_intValue(b.capacityAh)}Ah';
-
-  static double capacityKwh(Battery b) =>
-      b.overrideCapacityKwh ?? b.voltageV * b.capacityAh / 1000;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,8 +65,8 @@ class VehicleScreen extends ConsumerWidget {
                           battery: b,
                           active: b.id == activeId,
                           typeLabel: typeLabel(b.type),
-                          specLabel: specLabel(b),
-                          capacityKwh: capacityKwh(b),
+                          specLabel: b.specLabel,
+                          capacityKwh: b.capacityKwh,
                         ),
                     ],
                   );
