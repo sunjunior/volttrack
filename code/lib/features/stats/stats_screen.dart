@@ -144,7 +144,7 @@ class _SohCard extends StatelessWidget {
     final battery = this.battery;
     if (battery == null) return null;
     final capacityKwh = battery.capacityKwh;
-    for (final w in analytics.windows) {
+    for (final w in analytics.windows.reversed) {
       final start = w.start;
       if ((start.socAfterPct ?? 0) >= 95 && (start.socBeforePct ?? 100) <= 10) {
         final soh = sohEstimate(
