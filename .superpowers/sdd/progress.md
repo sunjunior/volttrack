@@ -39,3 +39,4 @@ df82d1f A1 记录列表+删除 / b117766 A2 车辆建档+vehicleId 真实化 / 1
 - 修复批次 B（收敛与清理）：容量公式收敛为 Battery extension、停旧+插新包事务、EOF 换行批量、_SohCard 取最近、死字段删除、intl 移除、首页卡命名、README 校正、删除占位冒烟测试
 - 批次 B 后：复审修复提交（0ea9beb..HEAD）
 - 然后：finishing-a-development-branch（合并/PR/清理选项交用户）
+Repair B 后清理: 29 文件 EOF 换行 + README 措辞; analyze 0 / 55 tests 绿
