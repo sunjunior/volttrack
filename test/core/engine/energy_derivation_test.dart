@@ -11,6 +11,15 @@ void main() {
     expect(r.source, EnergySource.powerTimesHours);
   });
 
+  test('按时长：有前后 SOC 时优先反推度数', () {
+    final r = deriveEnergyKwh(
+      mode: ChargeMode.byTime, hours: 2, powerW: 300,
+      socBeforePct: 30, socAfterPct: 100, capacityKwh: 0.96, efficiency: 0.85,
+    );
+    expect(r.kwh, closeTo(0.791, 0.001));
+    expect(r.source, EnergySource.socDerived);
+  });
+
   test('按度/金额：金额÷单价推出度数', () {
     final r = deriveEnergyKwh(
       mode: ChargeMode.byKwh, moneyYuan: 1.6, unitPriceYuanPerKwh: 0.8,

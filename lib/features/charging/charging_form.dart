@@ -70,6 +70,9 @@ class _ChargingFormState extends ConsumerState<ChargingForm> {
         final unitPrice = _d(_unitPrice.text);
         return money != null && unitPrice != null && unitPrice > 0;
       case ChargeMode.byTime:
+        final before = int.tryParse(_socBefore.text);
+        final after = int.tryParse(_socAfter.text);
+        if (before != null && after != null && after > before) return true;
         final hours = _d(_hours.text);
         final power = _d(_power.text);
         return hours != null && hours > 0 && power != null && power > 0;
@@ -128,6 +131,7 @@ class _ChargingFormState extends ConsumerState<ChargingForm> {
     return Scaffold(
       appBar: AppBar(title: const Text('记账')),
       body: ListView(
+        key: const Key('form_list'),
         padding: const EdgeInsets.all(16),
         children: [
           SegmentedButton<ChargeMode>(
@@ -146,8 +150,10 @@ class _ChargingFormState extends ConsumerState<ChargingForm> {
             _field('单价', _unitPrice, const Key('unit_price'), hint: '元/kWh'),
           ],
           if (_byTime) ...[
+            _field('起始电量(可选)', _socBefore, const Key('soc_before'), hint: '%'),
+            _field('结束电量(可选)', _socAfter, const Key('soc_after'), hint: '%'),
             _field('时长', _hours, const Key('hours'), hint: '小时'),
-            _field('功率', _power, const Key('power_w'), hint: 'W'),
+            _field('功率(平均)', _power, const Key('power_w'), hint: 'W'),
             _field('金额（可选）', _money, const Key('money'), hint: '元'),
           ],
           if (_homeOutlet) ...[
@@ -181,7 +187,7 @@ class _ChargingFormState extends ConsumerState<ChargingForm> {
                     ),
                   if (_byTime && liters != null)
                     Text(
-                      '按时长模式按计费档进一',
+                      '填了前后电量按电量反推（最准）；功率请填平均功率（充电过程约 200W→30W）',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                 ],

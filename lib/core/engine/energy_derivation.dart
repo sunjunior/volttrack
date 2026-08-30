@@ -29,6 +29,13 @@ EnergyResult deriveEnergyKwh({
       }
       break;
     case ChargeMode.byTime:
+      if (socBeforePct != null &&
+          socAfterPct != null &&
+          capacityKwh != null &&
+          socAfterPct > socBeforePct) {
+        final delta = (socAfterPct - socBeforePct) / 100;
+        return EnergyResult(capacityKwh * delta / efficiency, EnergySource.socDerived);
+      }
       if (hours != null && powerW != null && hours > 0 && powerW > 0) {
         return EnergyResult(powerW * hours / 1000 * efficiency, EnergySource.powerTimesHours);
       }
