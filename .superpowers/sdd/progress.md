@@ -40,3 +40,9 @@ df82d1f A1 记录列表+删除 / b117766 A2 车辆建档+vehicleId 真实化 / 1
 - 批次 B 后：复审修复提交（0ea9beb..HEAD）
 - 然后：finishing-a-development-branch（合并/PR/清理选项交用户）
 Repair B 后清理: 29 文件 EOF 换行 + README 措辞; analyze 0 / 55 tests 绿
+
+## Release 发布（main @ b2963cf 后）
+- keystore：~/keystores/volttrack-upload.jks（别名 upload，仓库外，有效期 10000 天）
+- 签名配置：code/android/key.properties（gitignored）+ build.gradle.kts（b2963cf，缺 key.properties 时回退 debug 签名）
+- 产物：app-release.apk 59MB；分 ABI：arm64-v8a 20.4MB / armeabi-v7a 17.8MB / x86_64 21.9MB
+- 验签：apksigner V2，证书 CN=VoltTrack（SHA-256 38d6bb0f...35bd）
