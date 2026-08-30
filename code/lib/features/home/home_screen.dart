@@ -11,12 +11,13 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final analytics = ref.watch(analyticsProvider);
+    final charges = ref.watch(chargesProvider).value ?? const [];
     return Scaffold(
       appBar: AppBar(title: const Text('VoltTrack')),
       body: analytics.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('加载失败: $e')),
-        data: (a) => a.windowCount == 0
+        data: (a) => charges.isEmpty
             ? EmptyState(
                 icon: Icons.electric_bolt,
                 message: '还没有记账',
