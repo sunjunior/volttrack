@@ -29,29 +29,34 @@ E_ride = Σ窗口内充入度数 − C × (SOC_B到达 − SOC_A到达)
 样例：48V20Ah 电池（0.96 kWh）充 0.72 度（SOC 30%→100%），骑 60 km 后剩 45%
 → E_ride = 0.72 − 0.96×0.15 = 0.576 kWh，百公里电耗 **0.96 kWh/100km**。
 
-完整口径与边界约定见[设计文档](docs/superpowers/specs/2026-08-29-volttrack-ebike-app-design.md)。
+## 应用截图
+
+| | |
+|---|---|
+| ![截图1](docs/img/volttrack1.jpg) | ![截图2](docs/img/volttrack2.jpg) |
+| ![截图3](docs/img/volttrack3.jpg) | ![截图4](docs/img/volttrack4.jpg) |
+| ![截图5](docs/img/volttrack5.jpg) | ![截图6](docs/img/volttrack6.jpg) |
 
 ## 构建
 
 ```bash
-cd code
 flutter pub get
 flutter test          # 55 个测试
 flutter build apk --release --split-per-abi   # arm64 包约 20MB
 ```
 
-正式签名配置见 [code/README.md](code/README.md)（keystore 不入库）。
+正式签名配置见 [docs/BUILD.md](docs/BUILD.md)（keystore 不入库）。
 
 ## 项目结构
 
 ```
-code/lib/
+lib/
 ├── core/models/    # 领域模型与枚举
 ├── core/engine/    # 纯函数计算引擎（TDD 主战场）
 ├── data/           # drift 表定义、Repository、Riverpod providers
 ├── features/       # 页面 UI（home/charging/stats/vehicle/calculator）
 └── shared/         # 通用组件
-docs/               # 设计文档与实现计划
+docs/               # 构建说明（BUILD.md）与应用截图
 ```
 
 - 技术栈：Flutter · Riverpod · drift(SQLite) · fl_chart
