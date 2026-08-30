@@ -1,0 +1,12 @@
+# 开发过程内部记录（账本/审查报告），不入开源仓库
+.superpowers/
+
+# 签名与密钥
+*.jks
+*.keystore
+key.properties
+
+# 系统与编辑器
+.DS_Store
+.idea/
+*.iml
