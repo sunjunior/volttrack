@@ -149,11 +149,13 @@ class _ChargingFormState extends ConsumerState<ChargingForm> {
           if (_byTime) ...[
             _field('时长', _hours, const Key('hours'), hint: '小时'),
             _field('功率', _power, const Key('power_w'), hint: 'W'),
+            _field('金额（可选）', _money, const Key('money'), hint: '元'),
           ],
           if (_homeOutlet) ...[
             _field('起始电量', _socBefore, const Key('soc_before'), hint: '%'),
             _field('结束电量', _socAfter, const Key('soc_after'), hint: '%'),
             _field('充电度数(可选)', _kwh, const Key('kwh'), hint: 'kWh'),
+            _field('金额（可选）', _money, const Key('money'), hint: '元'),
           ],
           _field('里程', _mileage, const Key('mileage'), hint: 'km'),
           const SizedBox(height: 16),
